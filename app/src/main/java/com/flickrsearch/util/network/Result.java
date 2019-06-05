@@ -9,11 +9,11 @@ public class Result<T> {
         this.exception = exception;
     }
 
-    Result(T value) {
+    public Result(T value) {
         this(value, null);
     }
 
-    Result(Exception exception) {
+    public Result(Exception exception) {
         this(null, exception);
     }
 

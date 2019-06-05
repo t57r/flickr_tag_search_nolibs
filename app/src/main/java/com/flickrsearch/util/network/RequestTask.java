@@ -4,7 +4,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 
-import com.flickrsearch.data.mapper.JsonMapper;
+import com.flickrsearch.util.decoder.InputStreamDecoder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,20 +14,25 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class RequestTask<T> extends AsyncTask<String, Integer, Result<T>> {
     private static final int HTTP_TIMEOUT_MS = 3000;
-    private static final int READ_BUFFER_SIZE = 4096;
 
     private final NetworkInfo networkInfo;
-    private final JsonMapper<T> jsonMapper;
+    private final InputStreamDecoder<T> inputStreamDecoder;
     private final OnResultListener<T> onResultListener;
+
+    private String url;
 
     public RequestTask(
             NetworkInfo networkInfo,
-            JsonMapper<T> jsonMapper,
+            InputStreamDecoder<T> inputStreamDecoder,
             OnResultListener<T> onResultListener
     ) {
         this.networkInfo = networkInfo;
-        this.jsonMapper = jsonMapper;
+        this.inputStreamDecoder = inputStreamDecoder;
         this.onResultListener = onResultListener;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     @Override
@@ -45,13 +50,8 @@ public class RequestTask<T> extends AsyncTask<String, Integer, Result<T>> {
         Result<T> result = null;
         if (!isCancelled() && uri != null && uri.length > 0) {
             try {
-                URL url = new URL(uri[0]);
-                String responseBody = runGetRequest(url);
-                if (responseBody != null) {
-                    result = new Result<>(jsonMapper.map(responseBody));
-                } else {
-                    throw new IOException("No response received.");
-                }
+                url = uri[0];
+                result = runGetRequest(new URL(url));
             } catch (Exception e) {
                 result = new Result<>(e);
             }
@@ -66,10 +66,10 @@ public class RequestTask<T> extends AsyncTask<String, Integer, Result<T>> {
         }
     }
 
-    private String runGetRequest(URL url) throws IOException {
+    private Result<T> runGetRequest(URL url) throws IOException {
         InputStream stream = null;
         HttpsURLConnection connection = null;
-        String result = null;
+        Result<T> result = null;
         try {
             connection = (HttpsURLConnection) url.openConnection();
             connection.setReadTimeout(HTTP_TIMEOUT_MS);
@@ -82,8 +82,10 @@ public class RequestTask<T> extends AsyncTask<String, Integer, Result<T>> {
             }
             stream = connection.getInputStream();
             if (stream != null) {
-                result = readStream(stream);
+                result = inputStreamDecoder.decodeStream(stream);
             }
+        } catch (Exception e) {
+            result = new Result<>(e);
         } finally {
             if (stream != null) {
                 stream.close();
@@ -95,13 +97,5 @@ public class RequestTask<T> extends AsyncTask<String, Integer, Result<T>> {
         return result;
     }
 
-    private String readStream(InputStream stream) throws IOException {
-        byte[] buffer = new byte[READ_BUFFER_SIZE];
-        StringBuilder strBuilder = new StringBuilder();
-        int readBytes;
-        while ((readBytes = stream.read(buffer)) >= 0) {
-            strBuilder.append(new String(buffer, 0, readBytes));
-        }
-        return strBuilder.toString();
-    }
+
 }
