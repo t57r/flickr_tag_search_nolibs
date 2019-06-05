@@ -17,6 +17,10 @@ public class PhotosPage {
         this.photos = photos;
     }
 
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
     @Override
     public String toString() {
         return PhotosPage.class.getSimpleName()

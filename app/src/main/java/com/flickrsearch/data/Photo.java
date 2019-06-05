@@ -13,6 +13,22 @@ public class Photo {
         this.farm = farm;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public String getFarm() {
+        return farm;
+    }
+
     @Override
     public String toString() {
         return Photo.class.getSimpleName()
