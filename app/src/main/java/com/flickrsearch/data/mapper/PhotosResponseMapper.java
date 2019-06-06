@@ -19,8 +19,6 @@ public class PhotosResponseMapper implements JsonMapper<PhotosResponse> {
         "photos":{
             "page":1,
             "pages":1633,
-            "perpage":100,
-            "total":"163234",
             "photo":[
             {
                 "id":"47992620978",
@@ -49,8 +47,6 @@ public class PhotosResponseMapper implements JsonMapper<PhotosResponse> {
         return new PhotosResponse(new PhotosPage(
                 photosObj.getLong("page"),
                 photosObj.getLong("pages"),
-                photosObj.getLong("perpage"),
-                photosObj.getString("total"),
                 photoList
         ));
     }

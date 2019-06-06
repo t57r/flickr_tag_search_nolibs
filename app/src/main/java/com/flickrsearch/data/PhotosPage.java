@@ -5,15 +5,11 @@ import java.util.List;
 public class PhotosPage {
     private final long page;
     private final long pages;
-    private final long perpage;
-    private final String total;
     private final List<Photo> photos;
 
-    public PhotosPage(long page, long pages, long perpage, String total, List<Photo> photos) {
+    public PhotosPage(long page, long pages, List<Photo> photos) {
         this.page = page;
         this.pages = pages;
-        this.perpage = perpage;
-        this.total = total;
         this.photos = photos;
     }
 
@@ -34,8 +30,6 @@ public class PhotosPage {
         return PhotosPage.class.getSimpleName()
                 + " page<" + page
                 + ">, pages<" + pages
-                + ">, perpage<" + perpage
-                + ">, total<" + total
                 + ">, photos<" + photos
                 + ">";
     }
