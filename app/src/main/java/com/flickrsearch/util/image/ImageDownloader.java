@@ -1,14 +1,23 @@
 package com.flickrsearch.util.image;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.NetworkInfo;
 import android.widget.ImageView;
 
 public class ImageDownloader {
 
+    private static final ImageCache IMAGE_CACHE = new ImageCache();
+
     public static void download(NetworkInfo networkInfo, String url, ImageView imageView) {
+        Bitmap cachedBitmap = IMAGE_CACHE.get(url);
+        if (cachedBitmap != null) {
+            imageView.setImageBitmap(cachedBitmap);
+            return;
+        }
+
         if (cancelPotentialDownload(url, imageView)) {
-            ImageDownloadTask task = new ImageDownloadTask(networkInfo, imageView);
+            ImageDownloadTask task = new ImageDownloadTask(networkInfo, imageView, IMAGE_CACHE);
             DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
             imageView.setImageDrawable(downloadedDrawable);
             task.execute(url);

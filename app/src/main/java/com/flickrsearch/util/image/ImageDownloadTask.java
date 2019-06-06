@@ -14,11 +14,13 @@ import java.lang.ref.WeakReference;
 public class ImageDownloadTask extends RequestTask<Bitmap> {
 
     private static final InputStreamDecoder<Bitmap> BITMAP_DECODER = new BitmapInputStreamDecoder();
+    private final ImageCache imageCache;
     private final WeakReference<ImageView> imageViewReference;
 
-    ImageDownloadTask(NetworkInfo networkInfo, ImageView imageView) {
+    ImageDownloadTask(NetworkInfo networkInfo, ImageView imageView, ImageCache imageCache) {
         super(networkInfo, BITMAP_DECODER, null);
-        imageViewReference = new WeakReference<>(imageView);
+        this.imageCache = imageCache;
+        this.imageViewReference = new WeakReference<>(imageView);
     }
 
     @Override
@@ -30,6 +32,7 @@ public class ImageDownloadTask extends RequestTask<Bitmap> {
             // Change bitmap only if this process is still associated with it
             Bitmap bitmap = result.getValue();
             if (this == imageDownloadTask && bitmap != null) {
+                imageCache.put(getUrl(), bitmap);
                 ImageViewUtils.fadeInBitmap(imageView, bitmap);
             }
         }
