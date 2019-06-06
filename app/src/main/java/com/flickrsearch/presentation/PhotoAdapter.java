@@ -28,8 +28,10 @@ public class PhotoAdapter extends BaseAdapter {
         this.networkInfo = networkInfo;
     }
 
-    void setPhotos(List<Photo> photos) {
-        this.photos.clear();
+    void setPhotos(List<Photo> photos, boolean shouldClear) {
+        if (shouldClear) {
+            this.photos.clear();
+        }
         this.photos.addAll(photos);
         notifyDataSetChanged();
     }

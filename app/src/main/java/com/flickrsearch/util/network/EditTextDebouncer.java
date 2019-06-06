@@ -7,13 +7,13 @@ import android.text.TextWatcher;
 import android.widget.EditText;
 
 public class EditTextDebouncer {
-    private static final long DEBOUNCE_TIMEOUT = 1000L;
+    private static final long DEBOUNCE_TIMEOUT = 500L;
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
     private Runnable workRunnable;
 
     public interface DebounceListener {
         void onCancel();
-        void onRun(String text);
+        void onTextChanged(String text);
     }
 
     public void debounce(EditText editText, final DebounceListener debounceListener) {
@@ -39,7 +39,7 @@ public class EditTextDebouncer {
         workRunnable = new Runnable() {
             @Override
             public void run() {
-                debounceListener.onRun(text);
+                debounceListener.onTextChanged(text);
             }
         };
         uiHandler.postDelayed(workRunnable, DEBOUNCE_TIMEOUT);

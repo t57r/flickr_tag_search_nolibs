@@ -30,7 +30,7 @@ public class ImageDownloadTask extends RequestTask<Bitmap> {
             // Change bitmap only if this process is still associated with it
             Bitmap bitmap = result.getValue();
             if (this == imageDownloadTask && bitmap != null) {
-                imageView.setImageBitmap(bitmap);
+                ImageViewUtils.fadeInBitmap(imageView, bitmap);
             }
         }
     }

@@ -21,6 +21,14 @@ public class PhotosPage {
         return photos;
     }
 
+    public long getPage() {
+        return page;
+    }
+
+    public long getPages() {
+        return pages;
+    }
+
     @Override
     public String toString() {
         return PhotosPage.class.getSimpleName()
